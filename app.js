@@ -13,12 +13,28 @@ const Game = (function createGame() {
       }
     })();
 
+    function _areCoordsValid(cellCoordTuple) {
+      const areValid = cellCoordTuple.every((x) => 0 <= x && x < 3);
+      if (!areValid) {
+        console.error("invalid coordinates");
+      }
+      return areValid;
+    }
+
     function placeMark(cellCoordTuple, playerIdx) {
+      if (!_areCoordsValid(cellCoordTuple)) {
+        return false;
+      }
+
       const [i, j] = cellCoordTuple;
       _cells[i][j] = playerIdx;
     }
 
     function removeMark(cellCoordTuple) {
+      if (!_areCoordsValid(cellCoordTuple)) {
+        return false;
+      }
+
       const [i, j] = cellCoordTuple;
       _cells[i][j] = -1;
     }
@@ -55,23 +71,33 @@ const Game = (function createGame() {
     };
   }
 
-  const GameManager = (function createGameManager(board) {
+  const GameManager = (function createGameManager(gameboard) {
     const players = [_createPlayer(), _createPlayer()];
-    let currentPlayerIdx = 0;
+    let _currentPlayerIdx = 0;
 
     function initGame() {}
 
     function togglePlayerTurn() {
-      if (currentPlayerIdx === 0) {
-        currentPlayerIdx = 1;
+      if (_currentPlayerIdx === 0) {
+        _currentPlayerIdx = 1;
       } else {
-        currentPlayerIdx = 0;
+        _currentPlayerIdx = 0;
       }
+    }
+
+    function getCurrentPlayerIdx() {
+      return _currentPlayerIdx;
+    }
+
+    // Is this normal? It is almost the exact same function as i have in my gameboard
+    function placeMark(cellCoordTuple) {
+      gameboard.placeMark(cellCoordTuple, _currentPlayerIdx);
     }
 
     return {
       players,
       togglePlayerTurn,
+      placeMark,
     };
   })(Gameboard);
 
