@@ -13,6 +13,10 @@ const Game = (function createGame() {
       }
     })();
 
+    function getCells() {
+      return _cells;
+    }
+
     function _areCoordsValid(cellCoordTuple) {
       const areValid = cellCoordTuple.every((x) => 0 <= x && x < 3);
       if (!areValid) {
@@ -102,7 +106,23 @@ const Game = (function createGame() {
       gameboard.placeMark(cellCoordTuple, _currentPlayerIdx);
     }
 
-    function playRound(CellCoordTupleUserInput) {}
+    function playRound(CellCoordUserInput) {
+      placeMark(CellCoordUserInput);
+      togglePlayerTurn();
+      
+      return hasPlayerWon();
+    }
+
+    function hasPlayerWon() {
+      // check horizontal rows
+      if (gameboard.getCells().any(row => row.every(mark => mark === _currentPlayerIdx))) {
+        return true;
+      }
+
+      
+      
+    }
+
 
     return {
       players,
@@ -118,10 +138,10 @@ const Game = (function createGame() {
 
 // --- TEST ---
 
-// function testMarkPlacement() {
-//   Game.GameManager.placeMark([1, 1]);
-//   console.assert(!Game.GameManager.placeMark([-1, 1]));
-//   console.assert(!Game.GameManager.placeMark([1, 1]));
-// }
+function testMarkPlacement() {
+  Game.GameManager.placeMark([1, 1]);
+  console.assert(!Game.GameManager.placeMark([-1, 1]));
+  console.assert(!Game.GameManager.placeMark([1, 1]));
+}
 
-testMarkPlacement();
+// testMarkPlacement();
