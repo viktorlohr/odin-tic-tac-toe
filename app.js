@@ -39,7 +39,7 @@ const Game = (function createGame() {
 
       _cells[i][j] = playerIdx;
 
-      console.table(_cells);
+      // console.table(_cells);
       return true;
     }
 
@@ -88,7 +88,7 @@ const Game = (function createGame() {
   const GameManager = (function createGameManager(gameboard) {
     const players = [_createPlayer(), _createPlayer()];
     let _currentPlayerIdx = 0;
-    let _winner = -1;
+    let _winnerIdx = -1;
 
     function _togglePlayerTurn() {
       if (_currentPlayerIdx === 0) {
@@ -107,7 +107,7 @@ const Game = (function createGame() {
     }
 
     function playRound(CellCoordUserInput) {
-      if (_winner !== -1) {
+      if (_winnerIdx !== -1) {
         return false;
       }
 
@@ -115,7 +115,7 @@ const Game = (function createGame() {
       if (!isPlacementValid) return false;
 
       if (hasPlayerWon()) {
-        _winner = _currentPlayerIdx;
+        _winnerIdx = _currentPlayerIdx;
         return true;
       }
 
@@ -154,8 +154,8 @@ const Game = (function createGame() {
       return false;
     }
 
-    function getWinner() {
-      return _winner;
+    function getWinnerIdx() {
+      return _winnerIdx;
     }
 
     function getCells() {
@@ -165,7 +165,7 @@ const Game = (function createGame() {
     return {
       playRound,
       getCurrentPlayerIdx,
-      getWinner,
+      getWinnerIdx,
       hasPlayerWon,
       getCells,
     };
@@ -216,7 +216,7 @@ const WinLogicTest = (function () {
 
   function test(coords) {
     coords.forEach((coord) => Game.GameManager.placeMark(coord));
-    console.log(Game.GameManager.hasPlayerWon());
+    // console.log(Game.GameManager.hasPlayerWon());
   }
 
   return {
@@ -260,6 +260,11 @@ const PlayRoundTest = (function () {
 const DisplayController = (function (gamemanager) {
   const gameboardEl = document.querySelector(".gameboard");
   const currentPlayerEl = document.querySelector(".current-player");
+  const currentPlayerAnnouncementEl = document.querySelector(
+    ".current-player-announcement",
+  );
+  const gameOverEl = document.querySelector(".game-over");
+  const winnerEl = document.querySelector(".winner");
 
   function update() {
     _updateGameboard();
@@ -269,7 +274,7 @@ const DisplayController = (function (gamemanager) {
   function _convertIdxToMark(idx) {
     switch (idx) {
       case -1:
-        return "test";
+        return "_";
       case 0:
         return "x";
       case 1:
@@ -302,8 +307,13 @@ const DisplayController = (function (gamemanager) {
         cellEl.textContent = _convertIdxToMark(cells[i][j]);
 
         cellEl.addEventListener("click", () => {
-          gamemanager.playRound([i, j]);
+          const hasWon = gamemanager.playRound([i, j]);
           update();
+
+          if (hasWon) {
+            _handleWin();
+            return;
+          }
         });
 
         gameboardEl.appendChild(cellEl);
@@ -315,6 +325,14 @@ const DisplayController = (function (gamemanager) {
     currentPlayerEl.textContent = _convertIdxToPlayerName(
       gamemanager.getCurrentPlayerIdx(),
     );
+  }
+
+  function _handleWin() {
+    currentPlayerAnnouncementEl.display = "none";
+
+    winnerEl.textContent = _convertIdxToPlayerName(gamemanager.getWinnerIdx());
+
+    gameOverEl.display = "flex";
   }
 
   return {

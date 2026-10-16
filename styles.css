@@ -1,9 +1,16 @@
 @import "reset.css";
 @import "base.css";
 
-.gameboard {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+:root {
+  --cell-width: 50px;
 }
 
+.gameboard {
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-width));
+  grid-template-rows: repeat(3, var(--cell-width));
+}
+
+.current-player .winner {
+  font-style: italic;
+}
