@@ -260,8 +260,15 @@ const PlayRoundTest = (function () {
 
 const DisplayController = (function (gamemanager) {
   const gameboardEl = document.querySelector(".gameboard");
+  const currentPlayerEl = document.querySelector(".current-player");
 
   const getCells = gamemanager.getCells;
+  const getCurrentPlayerIdx = gamemanager.getCurrentPlayerIdx;
+
+  function update() {
+    _updateGameboard();
+    _updateCurrentPlayer();
+  }
 
   function _convertIdxToMark(idx) {
     switch (idx) {
@@ -276,7 +283,18 @@ const DisplayController = (function (gamemanager) {
     }
   }
 
-  function updateGameboard() {
+  function _convertIdxToPlayerName(idx) {
+    switch (idx) {
+      case 0:
+        return "Player 1";
+      case 1:
+        return "Player 2";
+      default:
+        return "invalid player index";
+    }
+  }
+
+  function _updateGameboard() {
     getCells()
       .flat()
       .forEach((i) => {
@@ -287,10 +305,16 @@ const DisplayController = (function (gamemanager) {
       });
   }
 
+  function _updateCurrentPlayer() {
+    currentPlayerEl.textContent = _convertIdxToPlayerName(
+      getCurrentPlayerIdx(),
+    );
+  }
+
   return {
-    updateGameboard,
+    update,
   };
 })(Game.GameManager);
 
 // test
-DisplayController.updateGameboard();
+DisplayController.update();
