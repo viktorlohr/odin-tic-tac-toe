@@ -1,2 +1,14 @@
-@import url("reset.css");
-@import url("base.css");
+@import "reset.css";
+@import "base.css";
+
+.gameboard {
+  display: grid;
+  grid-template-columns: 3;
+  grid-template-rows: 3;
+}
+
+.gameboard > .row {
+  display: grid;
+  grid-row: span 3;
+  grid-template-columns: subgrid;
+}
