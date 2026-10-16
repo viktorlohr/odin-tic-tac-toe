@@ -5,6 +5,11 @@
   --cell-width: 50px;
 }
 
+body {
+  margin: 1vw;
+  padding: 0.5rem;
+}
+
 .gameboard {
   display: grid;
   grid-template-columns: repeat(3, var(--cell-width));
@@ -18,4 +23,5 @@
 .game-over {
   display: none;
   gap: 1rem;
+  flex-direction: column;
 }
