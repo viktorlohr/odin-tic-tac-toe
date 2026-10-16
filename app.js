@@ -25,7 +25,7 @@ const Game = (function createGame() {
       return areValid;
     }
 
-    function _placeMark(cellCoordTuple, playerIdx) {
+    function placeMark(cellCoordTuple, playerIdx) {
       if (!_areCoordsValid(cellCoordTuple)) {
         return false;
       }
@@ -61,7 +61,7 @@ const Game = (function createGame() {
     }
 
     return {
-      _placeMark,
+      placeMark,
       removeMark,
       resetAllCells,
       getCells,
@@ -103,7 +103,7 @@ const Game = (function createGame() {
     }
 
     function _placeMark(cellCoordTuple) {
-      return gameboard._placeMark(cellCoordTuple, _currentPlayerIdx);
+      return gameboard.placeMark(cellCoordTuple, _currentPlayerIdx);
     }
 
     function playRound(CellCoordUserInput) {
@@ -116,6 +116,15 @@ const Game = (function createGame() {
 
       if (hasPlayerWon()) {
         _winnerIdx = _currentPlayerIdx;
+        return true;
+      }
+
+      if (
+        gameboard
+          .getCells()
+          .flat()
+          .every((idx) => idx !== -1)
+      ) {
         return true;
       }
 
@@ -273,7 +282,11 @@ const DisplayController = (function (gamemanager) {
   );
   const gameOverEl = document.querySelector(".game-over");
   const winnerEl = document.querySelector(".winner");
+
   const resetBtn = document.querySelector(".reset");
+  resetBtn.addEventListener("click", () => {
+    _resetGame();
+  });
 
   _resetGame();
 
@@ -297,6 +310,8 @@ const DisplayController = (function (gamemanager) {
 
   function _convertIdxToPlayerName(idx) {
     switch (idx) {
+      case -1:
+        return "Noone. It was a tie!";
       case 0:
         return "Player 1";
       case 1:
@@ -318,10 +333,10 @@ const DisplayController = (function (gamemanager) {
         cellEl.textContent = _convertIdxToMark(cells[i][j]);
 
         cellEl.addEventListener("click", () => {
-          const hasWon = gamemanager.playRound([i, j]);
+          const isGameOver = gamemanager.playRound([i, j]);
           update();
 
-          if (hasWon) {
+          if (isGameOver) {
             _handleWin();
             return;
           }
@@ -344,10 +359,6 @@ const DisplayController = (function (gamemanager) {
 
     winnerEl.textContent = _convertIdxToPlayerName(gamemanager.getWinnerIdx());
     gameOverEl.style.display = "flex";
-
-    resetBtn.addEventListener("click", () => {
-      _resetGame();
-    });
   }
 
   function _resetGame() {
