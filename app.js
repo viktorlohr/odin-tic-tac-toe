@@ -291,6 +291,8 @@ const DisplayController = (function (gamemanager) {
   }
 
   function _updateGameboard() {
+    gameboardEl.replaceChildren();
+
     const cells = gamemanager.getCells();
 
     for (let i = 0; i < 3; i++) {
@@ -300,7 +302,7 @@ const DisplayController = (function (gamemanager) {
         cellEl.textContent = _convertIdxToMark(cells[i][j]);
 
         cellEl.addEventListener("click", () => {
-          gamemanager.playRound(cells[i][j]);
+          gamemanager.playRound([i, j]);
           update();
         });
 
