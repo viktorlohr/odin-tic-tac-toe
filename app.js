@@ -25,7 +25,7 @@ const Game = (function createGame() {
       return areValid;
     }
 
-    function placeMark(cellCoordTuple, playerIdx) {
+    function _placeMark(cellCoordTuple, playerIdx) {
       if (!_areCoordsValid(cellCoordTuple)) {
         return false;
       }
@@ -60,7 +60,7 @@ const Game = (function createGame() {
     }
 
     return {
-      placeMark,
+      _placeMark,
       removeMark,
       resetAllCells,
       getCells,
@@ -88,9 +88,7 @@ const Game = (function createGame() {
     const players = [_createPlayer(), _createPlayer()];
     let _currentPlayerIdx = 0;
 
-    function initGame() {}
-
-    function togglePlayerTurn() {
+    function _togglePlayerTurn() {
       if (_currentPlayerIdx === 0) {
         _currentPlayerIdx = 1;
       } else {
@@ -103,18 +101,21 @@ const Game = (function createGame() {
     }
 
     // Is this normal? It is almost the exact same function as i have in my gameboard
-    function placeMark(cellCoordTuple) {
-      gameboard.placeMark(cellCoordTuple, _currentPlayerIdx);
+    function _placeMark(cellCoordTuple) {
+      gameboard._placeMark(cellCoordTuple, _currentPlayerIdx);
     }
 
     function playRound(CellCoordUserInput) {
-      placeMark(CellCoordUserInput);
-      togglePlayerTurn();
+      _placeMark(CellCoordUserInput);
+      const hasWon = _hasPlayerWon();
 
-      return hasPlayerWon();
+      
+      _togglePlayerTurn();
+
+      return hasWon;
     }
 
-    function hasPlayerWon() {
+    function _hasPlayerWon() {
       // check horizontally
 
       const cells = gameboard.getCells();
@@ -146,10 +147,9 @@ const Game = (function createGame() {
     }
 
     return {
-      players,
-      togglePlayerTurn,
-      placeMark,
-      hasPlayerWon,
+      _placeMark,
+      playRound,
+      getCurrentPlayerIdx,
     };
   })(Gameboard);
 
@@ -161,9 +161,9 @@ const Game = (function createGame() {
 // --- TEST ---
 
 function testMarkPlacement() {
-  Game.GameManager.placeMark([1, 1]);
-  console.assert(!Game.GameManager.placeMark([-1, 1]));
-  console.assert(!Game.GameManager.placeMark([1, 1]));
+  Game.GameManager._placeMark([1, 1]);
+  console.assert(!Game.GameManager._placeMark([-1, 1]));
+  console.assert(!Game.GameManager._placeMark([1, 1]));
 }
 // testMarkPlacement();
 
@@ -197,7 +197,7 @@ const WinLogicTest = (function () {
   ];
 
   function test(coords) {
-    coords.forEach((coord) => Game.GameManager.placeMark(coord));
+    coords.forEach((coord) => Game.GameManager._placeMark(coord));
     console.log(Game.GameManager.hasPlayerWon());
   }
 
@@ -211,4 +211,28 @@ const WinLogicTest = (function () {
   };
 })();
 
-WinLogicTest.test(WinLogicTest.altDiagCoords);
+const PlayRoundTest = (function () {
+  const coords = [
+    [1, 1],
+    [0, 0],
+    [0, 1],
+    [2, 1],
+    [1, 0],
+    [1, 2],
+    [2, 0],
+    [2, 2],
+    [0, 2],
+  ];
+
+  function test() {
+    coords.forEach((coord) => console.log(Game.GameManager.playRound(coord)));
+  }
+
+  return {
+    test,
+  };
+})();
+
+// WinLogicTest.test(WinLogicTest.altDiagCoords);
+
+PlayRoundTest.test();
