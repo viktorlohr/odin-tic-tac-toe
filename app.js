@@ -109,20 +109,38 @@ const Game = (function createGame() {
     function playRound(CellCoordUserInput) {
       placeMark(CellCoordUserInput);
       togglePlayerTurn();
-      
+
       return hasPlayerWon();
     }
 
     function hasPlayerWon() {
-      // check horizontal rows
-      if (gameboard.getCells().any(row => row.every(mark => mark === _currentPlayerIdx))) {
+      // check horizontally
+
+      const cells = gameboard.getCells();
+
+      if (cells.any((row) => row.every((mark) => mark === _currentPlayerIdx))) {
         return true;
       }
 
-      
-      
-    }
+      // Check vertically
+      [0, 1, 2].forEach((columnIdx) => {
+        if (
+          cells.every((row) => {
+            row[columnIdx] === _currentPlayerIdx;
+          })
+        ) {
+          return true;
+        }
+      });
 
+      // Check diagonally
+      if ([0, 1, 2].every((idx) => cells[idx][idx] === _currentPlayerIdx)) {
+        return true;
+      }
+      if ([0, 1, 2].every((idx) => cells[2 - idx][idx] === _currentPlayerIdx)) {
+        return true;
+      }
+    }
 
     return {
       players,
@@ -143,5 +161,26 @@ function testMarkPlacement() {
   console.assert(!Game.GameManager.placeMark([-1, 1]));
   console.assert(!Game.GameManager.placeMark([1, 1]));
 }
-
 // testMarkPlacement();
+
+const WinLogicTest = (function () {
+  const columnCoords = [
+    [0, 0],
+    [1, 0],
+    [2, 0],
+  ];
+  const rowCoords = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+  ];
+  const verticalCoords = [
+    [0, 0],
+    [1, 1],
+    [2, 2],
+  ];
+
+  function testWinLogic(coords) {
+    coords.forEach((coord) => Game.GameManager.placeMark(coord));
+  }
+})();
