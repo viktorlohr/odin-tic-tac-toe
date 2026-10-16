@@ -16,7 +16,7 @@ const Game = (function createGame() {
     function _areCoordsValid(cellCoordTuple) {
       const areValid = cellCoordTuple.every((x) => 0 <= x && x < 3);
       if (!areValid) {
-        console.error("invalid coordinates");
+        console.error("Invalid coordinates");
       }
       return areValid;
     }
@@ -27,7 +27,15 @@ const Game = (function createGame() {
       }
 
       const [i, j] = cellCoordTuple;
+
+      if (_cells[i][j] !== -1) {
+        console.error("Cell already has a mark");
+        return false;
+      }
+
       _cells[i][j] = playerIdx;
+
+      console.table(_cells);
     }
 
     function removeMark(cellCoordTuple) {
@@ -94,6 +102,8 @@ const Game = (function createGame() {
       gameboard.placeMark(cellCoordTuple, _currentPlayerIdx);
     }
 
+    function playRound(CellCoordTupleUserInput) {}
+
     return {
       players,
       togglePlayerTurn,
@@ -106,4 +116,12 @@ const Game = (function createGame() {
   };
 })();
 
-console.log;
+// --- TEST ---
+
+// function testMarkPlacement() {
+//   Game.GameManager.placeMark([1, 1]);
+//   console.assert(!Game.GameManager.placeMark([-1, 1]));
+//   console.assert(!Game.GameManager.placeMark([1, 1]));
+// }
+
+testMarkPlacement();
