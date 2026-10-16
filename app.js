@@ -102,7 +102,7 @@ const Game = (function createGame() {
       return _currentPlayerIdx;
     }
 
-    function placeMark(cellCoordTuple) {
+    function _placeMark(cellCoordTuple) {
       return gameboard._placeMark(cellCoordTuple, _currentPlayerIdx);
     }
 
@@ -111,7 +111,7 @@ const Game = (function createGame() {
         return false;
       }
 
-      const isPlacementValid = placeMark(CellCoordUserInput);
+      const isPlacementValid = _placeMark(CellCoordUserInput);
       if (!isPlacementValid) return false;
 
       if (hasPlayerWon()) {
@@ -163,7 +163,6 @@ const Game = (function createGame() {
     }
 
     return {
-      placeMark: placeMark,
       playRound,
       getCurrentPlayerIdx,
       getWinner,
@@ -262,9 +261,6 @@ const DisplayController = (function (gamemanager) {
   const gameboardEl = document.querySelector(".gameboard");
   const currentPlayerEl = document.querySelector(".current-player");
 
-  const getCells = gamemanager.getCells;
-  const getCurrentPlayerIdx = gamemanager.getCurrentPlayerIdx;
-
   function update() {
     _updateGameboard();
     _updateCurrentPlayer();
@@ -295,19 +291,27 @@ const DisplayController = (function (gamemanager) {
   }
 
   function _updateGameboard() {
-    getCells()
-      .flat()
-      .forEach((i) => {
+    const cells = gamemanager.getCells();
+
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
         const cellEl = document.createElement("div");
         cellEl.classList.add("cell");
-        cellEl.textContent = _convertIdxToMark(i);
+        cellEl.textContent = _convertIdxToMark(cells[i][j]);
+
+        cellEl.addEventListener("click", () => {
+          gamemanager.playRound(cells[i][j]);
+          update();
+        });
+
         gameboardEl.appendChild(cellEl);
-      });
+      }
+    }
   }
 
   function _updateCurrentPlayer() {
     currentPlayerEl.textContent = _convertIdxToPlayerName(
-      getCurrentPlayerIdx(),
+      gamemanager.getCurrentPlayerIdx(),
     );
   }
 
