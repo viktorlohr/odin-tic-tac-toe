@@ -158,12 +158,17 @@ const Game = (function createGame() {
       return _winner;
     }
 
+    function getCells() {
+      return gameboard.getCells();
+    }
+
     return {
       placeMark: placeMark,
       playRound,
       getCurrentPlayerIdx,
       getWinner,
       hasPlayerWon,
+      getCells,
     };
   })(Gameboard);
 
@@ -249,10 +254,48 @@ const PlayRoundTest = (function () {
 
 // WinLogicTest.test(WinLogicTest.altDiagCoords);
 
-PlayRoundTest.test();
+// PlayRoundTest.test();
 
 // --- UI ---
 
-const DisplayController = (function () {
-  gameboardEl = document.querySelector(".gameboard");
-})();
+const DisplayController = (function (gamemanager) {
+  const gameboardEl = document.querySelector(".gameboard");
+
+  const getCells = gamemanager.getCells;
+
+  function _convertIdxToMark(idx) {
+    switch (idx) {
+      case -1:
+        return "test";
+      case 0:
+        return "x";
+      case 1:
+        return "o";
+      default:
+        return "invalid index";
+    }
+  }
+
+  function updateGameboard() {
+    for (let i = 0; i < 3; i++) {
+      const rowEl = document.createElement("div");
+      rowEl.classList.add("row");
+
+      for (let j = 0; j < 3; j++) {
+        const cellEl = document.createElement("div");
+        cellEl.classList.add("cell");
+
+        cellEl.textContent = _convertIdxToMark(getCells()[i][j]);
+        rowEl.appendChild(cellEl);
+      }
+
+      gameboardEl.appendChild(rowEl);
+    }
+  }
+  return {
+    updateGameboard,
+  };
+})(Game.GameManager);
+
+// test
+DisplayController.updateGameboard();
