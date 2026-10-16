@@ -123,6 +123,11 @@ const Game = (function createGame() {
       return false;
     }
 
+    function resetGame() {
+      _currentPlayerIdx = 0;
+      _winnerIdx = -1;
+    }
+
     function hasPlayerWon() {
       // check horizontally
 
@@ -168,6 +173,7 @@ const Game = (function createGame() {
       getWinnerIdx,
       hasPlayerWon,
       getCells,
+      resetGame,
     };
   })(Gameboard);
 
@@ -265,6 +271,9 @@ const DisplayController = (function (gamemanager) {
   );
   const gameOverEl = document.querySelector(".game-over");
   const winnerEl = document.querySelector(".winner");
+  const resetBtn = document.querySelector(".reset");
+
+  function init() {}
 
   function update() {
     _updateGameboard();
@@ -329,14 +338,19 @@ const DisplayController = (function (gamemanager) {
 
   function _handleWin() {
     currentPlayerAnnouncementEl.display = "none";
-
     winnerEl.textContent = _convertIdxToPlayerName(gamemanager.getWinnerIdx());
-
     gameOverEl.display = "flex";
+
+    resetBtn.addEventListener("click", () => {
+      _resetGame();
+    });
   }
+
+  function _resetGame() {}
 
   return {
     update,
+    init,
   };
 })(Game.GameManager);
 
