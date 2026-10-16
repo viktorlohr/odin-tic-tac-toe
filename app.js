@@ -63,6 +63,7 @@ const Game = (function createGame() {
       placeMark,
       removeMark,
       resetAllCells,
+      getCells,
     };
   })();
 
@@ -118,20 +119,20 @@ const Game = (function createGame() {
 
       const cells = gameboard.getCells();
 
-      if (cells.any((row) => row.every((mark) => mark === _currentPlayerIdx))) {
+      if (
+        cells.some((row) => row.every((mark) => mark === _currentPlayerIdx))
+      ) {
         return true;
       }
 
       // Check vertically
-      [0, 1, 2].forEach((columnIdx) => {
-        if (
-          cells.every((row) => {
-            row[columnIdx] === _currentPlayerIdx;
-          })
-        ) {
-          return true;
-        }
-      });
+
+      const hasVerticalWin = [0, 1, 2].some((columnIdx) =>
+        cells.every((row) => row[columnIdx] === _currentPlayerIdx),
+      );
+      if (hasVerticalWin) {
+        return true;
+      }
 
       // Check diagonally
       if ([0, 1, 2].every((idx) => cells[idx][idx] === _currentPlayerIdx)) {
@@ -140,12 +141,15 @@ const Game = (function createGame() {
       if ([0, 1, 2].every((idx) => cells[2 - idx][idx] === _currentPlayerIdx)) {
         return true;
       }
+
+      return false;
     }
 
     return {
       players,
       togglePlayerTurn,
       placeMark,
+      hasPlayerWon,
     };
   })(Gameboard);
 
@@ -164,23 +168,47 @@ function testMarkPlacement() {
 // testMarkPlacement();
 
 const WinLogicTest = (function () {
-  const columnCoords = [
+  const vertCoords = [
     [0, 0],
     [1, 0],
     [2, 0],
   ];
-  const rowCoords = [
+  const horizontalCoords = [
     [0, 0],
     [0, 1],
     [0, 2],
   ];
-  const verticalCoords = [
+  const diagCoords = [
     [0, 0],
     [1, 1],
     [2, 2],
   ];
 
-  function testWinLogic(coords) {
+  const altDiagCoords = [
+    [2, 0],
+    [1, 1],
+    [0, 2],
+  ];
+
+  const noWinCoords = [
+    [0, 0],
+    [0, 1],
+    [1, 1],
+  ];
+
+  function test(coords) {
     coords.forEach((coord) => Game.GameManager.placeMark(coord));
+    console.log(Game.GameManager.hasPlayerWon());
   }
+
+  return {
+    horizontalCoords,
+    diagCoords,
+    vertCoords,
+    noWinCoords,
+    altDiagCoords,
+    test,
+  };
 })();
+
+WinLogicTest.test(WinLogicTest.altDiagCoords);
