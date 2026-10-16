@@ -40,6 +40,7 @@ const Game = (function createGame() {
       _cells[i][j] = playerIdx;
 
       console.table(_cells);
+      return true;
     }
 
     function removeMark(cellCoordTuple) {
@@ -101,24 +102,28 @@ const Game = (function createGame() {
       return _currentPlayerIdx;
     }
 
-    // Is this normal? It is almost the exact same function as i have in my gameboard
-    function _placeMark(cellCoordTuple) {
-      gameboard._placeMark(cellCoordTuple, _currentPlayerIdx);
+    function placeMark(cellCoordTuple) {
+      return gameboard._placeMark(cellCoordTuple, _currentPlayerIdx);
     }
 
     function playRound(CellCoordUserInput) {
-      _placeMark(CellCoordUserInput);
-      const hasWon = _hasPlayerWon();
+      if (_winner !== -1) {
+        return false;
+      }
 
-      if (hasWon) {
+      const isPlacementValid = placeMark(CellCoordUserInput);
+      if (!isPlacementValid) return false;
+
+      if (hasPlayerWon()) {
         _winner = _currentPlayerIdx;
+        return true;
       }
 
       _togglePlayerTurn();
-      return hasWon;
+      return false;
     }
 
-    function _hasPlayerWon() {
+    function hasPlayerWon() {
       // check horizontally
 
       const cells = gameboard.getCells();
@@ -154,10 +159,11 @@ const Game = (function createGame() {
     }
 
     return {
-      _placeMark,
+      placeMark: placeMark,
       playRound,
       getCurrentPlayerIdx,
       getWinner,
+      hasPlayerWon,
     };
   })(Gameboard);
 
@@ -169,9 +175,9 @@ const Game = (function createGame() {
 // --- TEST ---
 
 function testMarkPlacement() {
-  Game.GameManager._placeMark([1, 1]);
-  console.assert(!Game.GameManager._placeMark([-1, 1]));
-  console.assert(!Game.GameManager._placeMark([1, 1]));
+  Game.GameManager.placeMark([1, 1]);
+  console.assert(!Game.GameManager.placeMark([-1, 1]));
+  console.assert(!Game.GameManager.placeMark([1, 1]));
 }
 // testMarkPlacement();
 
@@ -205,7 +211,7 @@ const WinLogicTest = (function () {
   ];
 
   function test(coords) {
-    coords.forEach((coord) => Game.GameManager._placeMark(coord));
+    coords.forEach((coord) => Game.GameManager.placeMark(coord));
     console.log(Game.GameManager.hasPlayerWon());
   }
 
