@@ -126,6 +126,8 @@ const Game = (function createGame() {
     function resetGame() {
       _currentPlayerIdx = 0;
       _winnerIdx = -1;
+
+      gameboard.resetAllCells();
     }
 
     function hasPlayerWon() {
@@ -273,7 +275,7 @@ const DisplayController = (function (gamemanager) {
   const winnerEl = document.querySelector(".winner");
   const resetBtn = document.querySelector(".reset");
 
-  function init() {}
+  _resetGame();
 
   function update() {
     _updateGameboard();
@@ -337,22 +339,25 @@ const DisplayController = (function (gamemanager) {
   }
 
   function _handleWin() {
-    currentPlayerAnnouncementEl.display = "none";
+    // Why does this not toggle the display?
+    currentPlayerAnnouncementEl.style.display = "none";
+
     winnerEl.textContent = _convertIdxToPlayerName(gamemanager.getWinnerIdx());
-    gameOverEl.display = "flex";
+    gameOverEl.style.display = "flex";
 
     resetBtn.addEventListener("click", () => {
       _resetGame();
     });
   }
 
-  function _resetGame() {}
+  function _resetGame() {
+    gamemanager.resetGame();
+    gameOverEl.style.display = "none";
+    currentPlayerAnnouncementEl.style.display = "flex";
+    update();
+  }
 
   return {
     update,
-    init,
   };
 })(Game.GameManager);
-
-// test
-DisplayController.update();
