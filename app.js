@@ -277,21 +277,16 @@ const DisplayController = (function (gamemanager) {
   }
 
   function updateGameboard() {
-    for (let i = 0; i < 3; i++) {
-      const rowEl = document.createElement("div");
-      rowEl.classList.add("row");
-
-      for (let j = 0; j < 3; j++) {
+    getCells()
+      .flat()
+      .forEach((i) => {
         const cellEl = document.createElement("div");
         cellEl.classList.add("cell");
-
-        cellEl.textContent = _convertIdxToMark(getCells()[i][j]);
-        rowEl.appendChild(cellEl);
-      }
-
-      gameboardEl.appendChild(rowEl);
-    }
+        cellEl.textContent = _convertIdxToMark(i);
+        gameboardEl.appendChild(cellEl);
+      });
   }
+
   return {
     updateGameboard,
   };

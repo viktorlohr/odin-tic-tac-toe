@@ -3,12 +3,6 @@
 
 .gameboard {
   display: grid;
-  grid-template-columns: 3;
-  grid-template-rows: 3;
-}
-
-.gameboard > .row {
-  display: grid;
-  grid-row: span 3;
-  grid-template-columns: subgrid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
 }
