@@ -87,6 +87,7 @@ const Game = (function createGame() {
   const GameManager = (function createGameManager(gameboard) {
     const players = [_createPlayer(), _createPlayer()];
     let _currentPlayerIdx = 0;
+    let _winner = -1;
 
     function _togglePlayerTurn() {
       if (_currentPlayerIdx === 0) {
@@ -109,9 +110,11 @@ const Game = (function createGame() {
       _placeMark(CellCoordUserInput);
       const hasWon = _hasPlayerWon();
 
-      
-      _togglePlayerTurn();
+      if (hasWon) {
+        _winner = _currentPlayerIdx;
+      }
 
+      _togglePlayerTurn();
       return hasWon;
     }
 
@@ -146,10 +149,15 @@ const Game = (function createGame() {
       return false;
     }
 
+    function getWinner() {
+      return _winner;
+    }
+
     return {
       _placeMark,
       playRound,
       getCurrentPlayerIdx,
+      getWinner,
     };
   })(Gameboard);
 
