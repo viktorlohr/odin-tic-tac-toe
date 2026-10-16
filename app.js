@@ -250,3 +250,9 @@ const PlayRoundTest = (function () {
 // WinLogicTest.test(WinLogicTest.altDiagCoords);
 
 PlayRoundTest.test();
+
+// --- UI ---
+
+const DisplayController = (function () {
+  gameboardEl = document.querySelector(".gameboard");
+})();
